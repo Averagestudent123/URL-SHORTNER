@@ -10,9 +10,11 @@ function App() {
   const [shorturl, setshorturl] = useState("");
   const [copies, setcopies] = useState("Copy");
   const [QrImage, setQrImage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if(!url){return alert("Please enter a URL")}
+    if(!url || loading){return alert("Please enter a URL")};
+    setLoading(true);
 
     try{
       const res = await axios.post(`${API_BASE_URL}/shorten`, { url });
@@ -28,6 +30,8 @@ function App() {
     }catch(err){
       console.error(err);
       alert("Error shortening URL");
+    } finally{
+      setLoading(false);
     }
   
   }
@@ -44,7 +48,7 @@ function App() {
 
     <div className="w-full max-w-md">
       <input type="text" placeholder="Enter URL" value={url} onChange={(e) => seturl(e.target.value)} className="w-full p-3 mb-4 border rounded" />
-      <button onClick={handleSubmit} className="w-full p-3 mb-4 bg-blue-500 text-white rounded hover:bg-blue-600">
+      <button onClick={handleSubmit} className="w-full p-3 mb-4 bg-blue-500 text-white rounded hover:bg-blue-600" disabled={loading}>
         Shorten URL
       </button>
     </div>
